@@ -1,0 +1,47 @@
+---
+
+- name: Install necessary dependencies
+  apt:
+    name: "{{ easyrsa_dependencies }}"
+    state: present
+
+- name: Create destination directory
+  file:
+    path: "{{ easyrsa_install_dir }}"
+    state: directory
+    owner: root
+    group: root
+  register: dest_dir_created
+
+- name: Download specified version release
+  unarchive:
+    src: "{{ easyrsa_download_url }}"
+    remote_src: yes
+    dest: /tmp  # noqa 503
+  when: dest_dir_created.changed
+
+- name: Install library files
+  copy:
+    src: "/tmp/EasyRSA-{{ easyrsa_version }}/"
+    remote_src: yes
+    dest: "{{ easyrsa_install_dir }}"
+    mode: 0o755
+    owner: root
+    group: root  # noqa 503
+  when: dest_dir_created.changed
+
+- name: Set permissions
+  file:
+    path: /usr/lib/easyrsa/easyrsa
+    mode: +x
+
+- name: Install binary
+  copy:
+    content: |
+      #!/usr/bin/env bash
+      /usr/lib/easyrsa/easyrsa --vars=/usr/lib/easyrsa/vars "$@"
+    dest: /usr/bin/easyrsa
+    mode: 0o755
+    owner: root
+    group: root
+

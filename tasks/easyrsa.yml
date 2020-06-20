@@ -1,0 +1,17 @@
+- name: Include installation tasks
+  include_tasks:
+    file: install.yml
+    apply:
+      become: true
+
+- name: Include configuration tasks
+  include_tasks:
+    file: configure.yml
+    apply:
+      become: true
+
+- name: Include csr creation tasks
+  include_tasks: csr.yml
+
+- name: Include cert sign tasks
+  include_tasks: sign.yml

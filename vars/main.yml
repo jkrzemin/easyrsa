@@ -1,2 +1,5 @@
 ---
-# vars file for easyrsa
+easyrsa_dependencies:
+  - openssl
+
+easyrsa_download_url: "https://github.com/OpenVPN/easy-rsa/releases/download/v{{ easyrsa_version }}/EasyRSA-{{ easyrsa_version }}.tgz"
